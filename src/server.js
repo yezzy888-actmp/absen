@@ -9,7 +9,7 @@ const { validationResult } = require("express-validator");
 const authRoutes = require("./routes/authRoutes");
 const userRoutes = require("./routes/userRoutes");
 const classRoutes = require("./routes/classRoutes");
-const studentRoutes = require("./routes/studentRoutes");
+const studentRoutes = require.require("./routes/studentRoutes");
 const teacherSubjectRoutes = require("./routes/teacherSubjectRoutes");
 const teacherRoutes = require("./routes/teacherRoutes");
 const subjectRoutes = require("./routes/subjectRoutes");
@@ -17,7 +17,7 @@ const scheduleRoutes = require("./routes/scheduleRoutes");
 
 // Initialize express app
 const app = express();
-const PORT = process.env.PORT || 5000; // Changed from 3000 to 5000
+// Variabel PORT dan app.listen() dihapus/dikomentari untuk Vercel.
 
 // CORS configuration - Allow multiple origins
 const allowedOrigins = [
@@ -89,11 +89,5 @@ app.use((req, res) => {
   res.status(404).json({ message: "Route not found" });
 });
 
-// Start server
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-  console.log(`Environment: ${process.env.NODE_ENV || "development"}`);
-  console.log("Allowed origins:", allowedOrigins);
-});
-
+// Ekspor aplikasi Express untuk digunakan oleh Vercel
 module.exports = app;
