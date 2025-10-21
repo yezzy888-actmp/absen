@@ -9,7 +9,7 @@ const { validationResult } = require("express-validator");
 const authRoutes = require("./routes/authRoutes");
 const userRoutes = require("./routes/userRoutes");
 const classRoutes = require("./routes/classRoutes");
-const studentRoutes = require.require("./routes/studentRoutes");
+const studentRoutes = require("./routes/studentRoutes"); // <--- INI SUDAH DIPERBAIKI
 const teacherSubjectRoutes = require("./routes/teacherSubjectRoutes");
 const teacherRoutes = require("./routes/teacherRoutes");
 const subjectRoutes = require("./routes/subjectRoutes");
@@ -89,5 +89,5 @@ app.use((req, res) => {
   res.status(404).json({ message: "Route not found" });
 });
 
-// Ekspor aplikasi Express untuk digunakan oleh Vercel
+// Export Express application for Vercel Serverless Function
 module.exports = app;
