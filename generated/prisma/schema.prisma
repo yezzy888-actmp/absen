@@ -1,0 +1,261 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Model utama untuk autentikasi dan role user (siswa, guru, admin)
+model User {
+  id       String @id @default(uuid())
+  email    String @unique
+  password String
+  role     Role
+
+  // Relasi opsional tergantung role user
+  student Student?
+  teacher Teacher?
+
+  createdAt DateTime @default(now())
+
+  /// Use case utama:
+  /// - Registrasi & login user dengan role (STUDENT, TEACHER, ADMIN)
+  /// - Jika STUDENT, user akan punya data Student terkait
+  /// - Jika TEACHER, user akan punya data Teacher terkait
+}
+
+model Student {
+  id      String @id @default(uuid())
+  user    User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId  String @unique
+  name    String
+  nis     String @unique
+  gender  Gender
+  class   Class  @relation(fields: [classId], references: [id])
+  classId String
+
+  attendance Attendance[]
+  scores     Score[]
+
+  /// Use case:
+  /// - Menampilkan data profil siswa
+  /// - Mengakses jadwal kelas melalui Class
+  /// - Melihat riwayat absensi dan nilai
+  /// - Melakukan absensi melalui token sesi
+}
+
+// Data guru, terkait dengan User dan jadwal mengajar
+model Teacher {
+  id        String     @id @default(uuid())
+  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String     @unique
+  name      String
+  gender    Gender
+  // Jadwal mengajar (Schedule)
+  schedules Schedule[]
+
+  // Mata pelajaran yang diajar oleh guru ini
+  subjects TeacherSubject[]
+
+  /// Use case:
+  /// - Melihat profil guru dan jadwal mengajar
+  /// - Membuat dan mengelola sesi absensi (AttendanceSession)
+  /// - Melihat dan mengelola absensi siswa
+  /// - Memberikan nilai ke siswa
+}
+
+// Mata pelajaran yang tersedia
+model Subject {
+  id   String @id @default(uuid())
+  name String
+
+  // Jadwal pelajaran untuk mapel ini
+  schedules Schedule[]
+
+  // Nilai untuk mapel ini
+  scores Score[]
+
+  // Guru yang mengajar mapel ini (relasi many-to-many)
+  teachers TeacherSubject[]
+
+  /// Use case:
+  /// - Mengelola daftar mata pelajaran
+  /// - Melihat jadwal dan nilai terkait mapel
+  /// - Menghubungkan guru dengan mata pelajaran
+}
+
+// Relasi many-to-many antara guru dan mata pelajaran
+model TeacherSubject {
+  id        String  @id @default(uuid())
+  teacher   Teacher @relation(fields: [teacherId], references: [id], onDelete: Cascade)
+  teacherId String
+  subject   Subject @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+  subjectId String
+
+  /// Use case:
+  /// - Menyimpan data guru yang mengajar mata pelajaran tertentu
+  /// - Mencegah duplikasi guru-mapel yang sama
+
+  @@unique([teacherId, subjectId])
+}
+
+// Data kelas
+model Class {
+  id   String @id @default(uuid())
+  name String
+
+  // Siswa yang tergabung dalam kelas ini
+  students Student[]
+
+  // Jadwal pelajaran kelas ini
+  schedules Schedule[]
+
+  /// Use case:
+  /// - Mengelola data kelas dan daftar siswa
+  /// - Menentukan jadwal pelajaran per kelas
+}
+
+// Jadwal pelajaran (relasi guru, mapel, dan kelas)
+model Schedule {
+  id        String  @id @default(uuid())
+  subject   Subject @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+  subjectId String
+  class     Class   @relation(fields: [classId], references: [id], onDelete: Cascade)
+  classId   String
+  teacher   Teacher @relation(fields: [teacherId], references: [id], onDelete: Cascade)
+  teacherId String
+
+  day       Weekday
+  startTime String
+  endTime   String
+
+  // Sesi absensi yang dibuat untuk jadwal ini
+  sessions AttendanceSession[]
+
+  // Semua absensi yang terjadi untuk jadwal ini
+  attendances Attendance[]
+
+  /// Use case:
+  /// - Menentukan jadwal pelajaran per hari per kelas dan guru
+  /// - Menyediakan data untuk membuat sesi absensi
+  /// - Melihat daftar absensi terkait jadwal ini
+}
+
+// Sesi absensi per jadwal pelajaran, dengan token unik
+model AttendanceSession {
+  id         String   @id @default(uuid())
+  schedule   Schedule @relation(fields: [scheduleId], references: [id], onDelete: Cascade)
+  scheduleId String
+  date       DateTime // Tanggal sesi
+  expiresAt  DateTime // Waktu kadaluarsa token sesi absensi
+  token      String   @unique // Token QR Code untuk scan siswa
+  createdAt  DateTime @default(now())
+
+  // Absensi yang tercatat di sesi ini
+  attendances Attendance[]
+
+  /// Use case:
+  /// - Guru membuat sesi absensi untuk jadwal hari tertentu
+  /// - Menghasilkan token unik untuk QR Code
+  /// - Memvalidasi scan token oleh siswa
+  /// - Mengelola waktu aktif token absensi
+}
+
+// Data absensi per siswa per sesi dan jadwal
+model Attendance {
+  id         String            @id @default(uuid())
+  student    Student           @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  studentId  String
+  schedule   Schedule          @relation(fields: [scheduleId], references: [id], onDelete: Cascade)
+  scheduleId String
+  session    AttendanceSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  sessionId  String
+  date       DateTime // Tanggal absensi
+  status     AttendanceStatus // Status kehadiran (HADIR, IZIN, dll)
+  scannedAt  DateTime? // Waktu scan token (bisa null jika diinput manual)
+  /// Use case:
+  /// - Mencatat kehadiran siswa pada sesi absensi tertentu
+  /// - Status absensi dapat berupa HADIR, IZIN, SAKIT, ALPHA
+  /// - Guru dapat mengubah status absensi secara manual
+  /// - Bisa dilihat oleh siswa, guru, admin untuk monitoring
+
+  @@unique([studentId, sessionId])
+}
+
+// Data nilai siswa per mata pelajaran
+model Score {
+  id        String  @id @default(uuid())
+  student   Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  studentId String
+  subject   Subject @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+  subjectId String
+
+  type        ScoreType
+  value       Float
+  description String? // Deskripsi nilai (misal: "UTS", "UAS", "TUGAS apa gitu")
+  createdAt   DateTime  @default(now())
+
+  /// Use case:
+  /// - Guru memberikan nilai (UTS, UAS, TUGAS) ke siswa
+  /// - Siswa dapat melihat nilai per mata pelajaran
+  /// - Admin bisa mengelola atau review nilai
+}
+
+// Role user dalam sistem
+enum Role {
+  STUDENT
+  TEACHER
+  ADMIN
+
+  /// Use case:
+  /// - Pengaturan akses dan fitur berdasar role
+}
+
+// Status kehadiran dalam absensi
+enum AttendanceStatus {
+  HADIR
+  IZIN
+  SAKIT
+  ALPHA
+
+  /// Use case:
+  /// - Menandai status absensi siswa
+  /// - Guru/admin dapat update status (misal ALPHA jadi SAKIT)
+}
+
+// Jenis nilai yang dapat diberikan
+enum ScoreType {
+  UTS
+  UAS
+  TUGAS
+
+  /// Use case:
+  /// - Klasifikasi jenis nilai untuk pelaporan dan perhitungan
+}
+
+// Hari dalam minggu untuk jadwal pelajaran
+enum Weekday {
+  SENIN
+  SELASA
+  RABU
+  KAMIS
+  JUMAT
+  SABTU
+
+  /// Use case:
+  /// - Penentuan hari pelaksanaan jadwal
+}
+
+enum Gender {
+  LAKI_LAKI
+  PEREMPUAN
+}
