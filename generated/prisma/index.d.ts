@@ -9676,8 +9676,22 @@ export namespace Prisma {
 
   export type AggregateAttendanceSession = {
     _count: AttendanceSessionCountAggregateOutputType | null
+    _avg: AttendanceSessionAvgAggregateOutputType | null
+    _sum: AttendanceSessionSumAggregateOutputType | null
     _min: AttendanceSessionMinAggregateOutputType | null
     _max: AttendanceSessionMaxAggregateOutputType | null
+  }
+
+  export type AttendanceSessionAvgAggregateOutputType = {
+    latitude: number | null
+    longitude: number | null
+    radiusMeters: number | null
+  }
+
+  export type AttendanceSessionSumAggregateOutputType = {
+    latitude: number | null
+    longitude: number | null
+    radiusMeters: number | null
   }
 
   export type AttendanceSessionMinAggregateOutputType = {
@@ -9687,6 +9701,9 @@ export namespace Prisma {
     expiresAt: Date | null
     token: string | null
     createdAt: Date | null
+    latitude: number | null
+    longitude: number | null
+    radiusMeters: number | null
   }
 
   export type AttendanceSessionMaxAggregateOutputType = {
@@ -9696,6 +9713,9 @@ export namespace Prisma {
     expiresAt: Date | null
     token: string | null
     createdAt: Date | null
+    latitude: number | null
+    longitude: number | null
+    radiusMeters: number | null
   }
 
   export type AttendanceSessionCountAggregateOutputType = {
@@ -9705,9 +9725,24 @@ export namespace Prisma {
     expiresAt: number
     token: number
     createdAt: number
+    latitude: number
+    longitude: number
+    radiusMeters: number
     _all: number
   }
 
+
+  export type AttendanceSessionAvgAggregateInputType = {
+    latitude?: true
+    longitude?: true
+    radiusMeters?: true
+  }
+
+  export type AttendanceSessionSumAggregateInputType = {
+    latitude?: true
+    longitude?: true
+    radiusMeters?: true
+  }
 
   export type AttendanceSessionMinAggregateInputType = {
     id?: true
@@ -9716,6 +9751,9 @@ export namespace Prisma {
     expiresAt?: true
     token?: true
     createdAt?: true
+    latitude?: true
+    longitude?: true
+    radiusMeters?: true
   }
 
   export type AttendanceSessionMaxAggregateInputType = {
@@ -9725,6 +9763,9 @@ export namespace Prisma {
     expiresAt?: true
     token?: true
     createdAt?: true
+    latitude?: true
+    longitude?: true
+    radiusMeters?: true
   }
 
   export type AttendanceSessionCountAggregateInputType = {
@@ -9734,6 +9775,9 @@ export namespace Prisma {
     expiresAt?: true
     token?: true
     createdAt?: true
+    latitude?: true
+    longitude?: true
+    radiusMeters?: true
     _all?: true
   }
 
@@ -9775,6 +9819,18 @@ export namespace Prisma {
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
      * 
+     * Select which fields to average
+    **/
+    _avg?: AttendanceSessionAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: AttendanceSessionSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
      * Select which fields to find the minimum value
     **/
     _min?: AttendanceSessionMinAggregateInputType
@@ -9805,6 +9861,8 @@ export namespace Prisma {
     take?: number
     skip?: number
     _count?: AttendanceSessionCountAggregateInputType | true
+    _avg?: AttendanceSessionAvgAggregateInputType
+    _sum?: AttendanceSessionSumAggregateInputType
     _min?: AttendanceSessionMinAggregateInputType
     _max?: AttendanceSessionMaxAggregateInputType
   }
@@ -9816,7 +9874,12 @@ export namespace Prisma {
     expiresAt: Date
     token: string
     createdAt: Date
+    latitude: number | null
+    longitude: number | null
+    radiusMeters: number | null
     _count: AttendanceSessionCountAggregateOutputType | null
+    _avg: AttendanceSessionAvgAggregateOutputType | null
+    _sum: AttendanceSessionSumAggregateOutputType | null
     _min: AttendanceSessionMinAggregateOutputType | null
     _max: AttendanceSessionMaxAggregateOutputType | null
   }
@@ -9842,6 +9905,9 @@ export namespace Prisma {
     expiresAt?: boolean
     token?: boolean
     createdAt?: boolean
+    latitude?: boolean
+    longitude?: boolean
+    radiusMeters?: boolean
     schedule?: boolean | ScheduleDefaultArgs<ExtArgs>
     attendances?: boolean | AttendanceSession$attendancesArgs<ExtArgs>
     _count?: boolean | AttendanceSessionCountOutputTypeDefaultArgs<ExtArgs>
@@ -9854,6 +9920,9 @@ export namespace Prisma {
     expiresAt?: boolean
     token?: boolean
     createdAt?: boolean
+    latitude?: boolean
+    longitude?: boolean
+    radiusMeters?: boolean
     schedule?: boolean | ScheduleDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["attendanceSession"]>
 
@@ -9864,6 +9933,9 @@ export namespace Prisma {
     expiresAt?: boolean
     token?: boolean
     createdAt?: boolean
+    latitude?: boolean
+    longitude?: boolean
+    radiusMeters?: boolean
     schedule?: boolean | ScheduleDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["attendanceSession"]>
 
@@ -9874,9 +9946,12 @@ export namespace Prisma {
     expiresAt?: boolean
     token?: boolean
     createdAt?: boolean
+    latitude?: boolean
+    longitude?: boolean
+    radiusMeters?: boolean
   }
 
-  export type AttendanceSessionOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "scheduleId" | "date" | "expiresAt" | "token" | "createdAt", ExtArgs["result"]["attendanceSession"]>
+  export type AttendanceSessionOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "scheduleId" | "date" | "expiresAt" | "token" | "createdAt" | "latitude" | "longitude" | "radiusMeters", ExtArgs["result"]["attendanceSession"]>
   export type AttendanceSessionInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     schedule?: boolean | ScheduleDefaultArgs<ExtArgs>
     attendances?: boolean | AttendanceSession$attendancesArgs<ExtArgs>
@@ -9902,6 +9977,9 @@ export namespace Prisma {
       expiresAt: Date
       token: string
       createdAt: Date
+      latitude: number | null
+      longitude: number | null
+      radiusMeters: number | null
     }, ExtArgs["result"]["attendanceSession"]>
     composites: {}
   }
@@ -10333,6 +10411,9 @@ export namespace Prisma {
     readonly expiresAt: FieldRef<"AttendanceSession", 'DateTime'>
     readonly token: FieldRef<"AttendanceSession", 'String'>
     readonly createdAt: FieldRef<"AttendanceSession", 'DateTime'>
+    readonly latitude: FieldRef<"AttendanceSession", 'Float'>
+    readonly longitude: FieldRef<"AttendanceSession", 'Float'>
+    readonly radiusMeters: FieldRef<"AttendanceSession", 'Int'>
   }
     
 
@@ -10777,8 +10858,20 @@ export namespace Prisma {
 
   export type AggregateAttendance = {
     _count: AttendanceCountAggregateOutputType | null
+    _avg: AttendanceAvgAggregateOutputType | null
+    _sum: AttendanceSumAggregateOutputType | null
     _min: AttendanceMinAggregateOutputType | null
     _max: AttendanceMaxAggregateOutputType | null
+  }
+
+  export type AttendanceAvgAggregateOutputType = {
+    scannedLatitude: number | null
+    scannedLongitude: number | null
+  }
+
+  export type AttendanceSumAggregateOutputType = {
+    scannedLatitude: number | null
+    scannedLongitude: number | null
   }
 
   export type AttendanceMinAggregateOutputType = {
@@ -10789,6 +10882,8 @@ export namespace Prisma {
     date: Date | null
     status: $Enums.AttendanceStatus | null
     scannedAt: Date | null
+    scannedLatitude: number | null
+    scannedLongitude: number | null
   }
 
   export type AttendanceMaxAggregateOutputType = {
@@ -10799,6 +10894,8 @@ export namespace Prisma {
     date: Date | null
     status: $Enums.AttendanceStatus | null
     scannedAt: Date | null
+    scannedLatitude: number | null
+    scannedLongitude: number | null
   }
 
   export type AttendanceCountAggregateOutputType = {
@@ -10809,9 +10906,21 @@ export namespace Prisma {
     date: number
     status: number
     scannedAt: number
+    scannedLatitude: number
+    scannedLongitude: number
     _all: number
   }
 
+
+  export type AttendanceAvgAggregateInputType = {
+    scannedLatitude?: true
+    scannedLongitude?: true
+  }
+
+  export type AttendanceSumAggregateInputType = {
+    scannedLatitude?: true
+    scannedLongitude?: true
+  }
 
   export type AttendanceMinAggregateInputType = {
     id?: true
@@ -10821,6 +10930,8 @@ export namespace Prisma {
     date?: true
     status?: true
     scannedAt?: true
+    scannedLatitude?: true
+    scannedLongitude?: true
   }
 
   export type AttendanceMaxAggregateInputType = {
@@ -10831,6 +10942,8 @@ export namespace Prisma {
     date?: true
     status?: true
     scannedAt?: true
+    scannedLatitude?: true
+    scannedLongitude?: true
   }
 
   export type AttendanceCountAggregateInputType = {
@@ -10841,6 +10954,8 @@ export namespace Prisma {
     date?: true
     status?: true
     scannedAt?: true
+    scannedLatitude?: true
+    scannedLongitude?: true
     _all?: true
   }
 
@@ -10882,6 +10997,18 @@ export namespace Prisma {
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
      * 
+     * Select which fields to average
+    **/
+    _avg?: AttendanceAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: AttendanceSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
      * Select which fields to find the minimum value
     **/
     _min?: AttendanceMinAggregateInputType
@@ -10912,6 +11039,8 @@ export namespace Prisma {
     take?: number
     skip?: number
     _count?: AttendanceCountAggregateInputType | true
+    _avg?: AttendanceAvgAggregateInputType
+    _sum?: AttendanceSumAggregateInputType
     _min?: AttendanceMinAggregateInputType
     _max?: AttendanceMaxAggregateInputType
   }
@@ -10924,7 +11053,11 @@ export namespace Prisma {
     date: Date
     status: $Enums.AttendanceStatus
     scannedAt: Date | null
+    scannedLatitude: number | null
+    scannedLongitude: number | null
     _count: AttendanceCountAggregateOutputType | null
+    _avg: AttendanceAvgAggregateOutputType | null
+    _sum: AttendanceSumAggregateOutputType | null
     _min: AttendanceMinAggregateOutputType | null
     _max: AttendanceMaxAggregateOutputType | null
   }
@@ -10951,6 +11084,8 @@ export namespace Prisma {
     date?: boolean
     status?: boolean
     scannedAt?: boolean
+    scannedLatitude?: boolean
+    scannedLongitude?: boolean
     student?: boolean | StudentDefaultArgs<ExtArgs>
     schedule?: boolean | ScheduleDefaultArgs<ExtArgs>
     session?: boolean | AttendanceSessionDefaultArgs<ExtArgs>
@@ -10964,6 +11099,8 @@ export namespace Prisma {
     date?: boolean
     status?: boolean
     scannedAt?: boolean
+    scannedLatitude?: boolean
+    scannedLongitude?: boolean
     student?: boolean | StudentDefaultArgs<ExtArgs>
     schedule?: boolean | ScheduleDefaultArgs<ExtArgs>
     session?: boolean | AttendanceSessionDefaultArgs<ExtArgs>
@@ -10977,6 +11114,8 @@ export namespace Prisma {
     date?: boolean
     status?: boolean
     scannedAt?: boolean
+    scannedLatitude?: boolean
+    scannedLongitude?: boolean
     student?: boolean | StudentDefaultArgs<ExtArgs>
     schedule?: boolean | ScheduleDefaultArgs<ExtArgs>
     session?: boolean | AttendanceSessionDefaultArgs<ExtArgs>
@@ -10990,9 +11129,11 @@ export namespace Prisma {
     date?: boolean
     status?: boolean
     scannedAt?: boolean
+    scannedLatitude?: boolean
+    scannedLongitude?: boolean
   }
 
-  export type AttendanceOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "studentId" | "scheduleId" | "sessionId" | "date" | "status" | "scannedAt", ExtArgs["result"]["attendance"]>
+  export type AttendanceOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "studentId" | "scheduleId" | "sessionId" | "date" | "status" | "scannedAt" | "scannedLatitude" | "scannedLongitude", ExtArgs["result"]["attendance"]>
   export type AttendanceInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     student?: boolean | StudentDefaultArgs<ExtArgs>
     schedule?: boolean | ScheduleDefaultArgs<ExtArgs>
@@ -11024,6 +11165,8 @@ export namespace Prisma {
       date: Date
       status: $Enums.AttendanceStatus
       scannedAt: Date | null
+      scannedLatitude: number | null
+      scannedLongitude: number | null
     }, ExtArgs["result"]["attendance"]>
     composites: {}
   }
@@ -11457,6 +11600,8 @@ export namespace Prisma {
     readonly date: FieldRef<"Attendance", 'DateTime'>
     readonly status: FieldRef<"Attendance", 'AttendanceStatus'>
     readonly scannedAt: FieldRef<"Attendance", 'DateTime'>
+    readonly scannedLatitude: FieldRef<"Attendance", 'Float'>
+    readonly scannedLongitude: FieldRef<"Attendance", 'Float'>
   }
     
 
@@ -13088,7 +13233,10 @@ export namespace Prisma {
     date: 'date',
     expiresAt: 'expiresAt',
     token: 'token',
-    createdAt: 'createdAt'
+    createdAt: 'createdAt',
+    latitude: 'latitude',
+    longitude: 'longitude',
+    radiusMeters: 'radiusMeters'
   };
 
   export type AttendanceSessionScalarFieldEnum = (typeof AttendanceSessionScalarFieldEnum)[keyof typeof AttendanceSessionScalarFieldEnum]
@@ -13101,7 +13249,9 @@ export namespace Prisma {
     sessionId: 'sessionId',
     date: 'date',
     status: 'status',
-    scannedAt: 'scannedAt'
+    scannedAt: 'scannedAt',
+    scannedLatitude: 'scannedLatitude',
+    scannedLongitude: 'scannedLongitude'
   };
 
   export type AttendanceScalarFieldEnum = (typeof AttendanceScalarFieldEnum)[keyof typeof AttendanceScalarFieldEnum]
@@ -13220,34 +13370,6 @@ export namespace Prisma {
 
 
   /**
-   * Reference to a field of type 'AttendanceStatus'
-   */
-  export type EnumAttendanceStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'AttendanceStatus'>
-    
-
-
-  /**
-   * Reference to a field of type 'AttendanceStatus[]'
-   */
-  export type ListEnumAttendanceStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'AttendanceStatus[]'>
-    
-
-
-  /**
-   * Reference to a field of type 'ScoreType'
-   */
-  export type EnumScoreTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ScoreType'>
-    
-
-
-  /**
-   * Reference to a field of type 'ScoreType[]'
-   */
-  export type ListEnumScoreTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ScoreType[]'>
-    
-
-
-  /**
    * Reference to a field of type 'Float'
    */
   export type FloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float'>
@@ -13272,6 +13394,34 @@ export namespace Prisma {
    * Reference to a field of type 'Int[]'
    */
   export type ListIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'AttendanceStatus'
+   */
+  export type EnumAttendanceStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'AttendanceStatus'>
+    
+
+
+  /**
+   * Reference to a field of type 'AttendanceStatus[]'
+   */
+  export type ListEnumAttendanceStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'AttendanceStatus[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'ScoreType'
+   */
+  export type EnumScoreTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ScoreType'>
+    
+
+
+  /**
+   * Reference to a field of type 'ScoreType[]'
+   */
+  export type ListEnumScoreTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ScoreType[]'>
     
   /**
    * Deep Input Types
@@ -13686,6 +13836,9 @@ export namespace Prisma {
     expiresAt?: DateTimeFilter<"AttendanceSession"> | Date | string
     token?: StringFilter<"AttendanceSession"> | string
     createdAt?: DateTimeFilter<"AttendanceSession"> | Date | string
+    latitude?: FloatNullableFilter<"AttendanceSession"> | number | null
+    longitude?: FloatNullableFilter<"AttendanceSession"> | number | null
+    radiusMeters?: IntNullableFilter<"AttendanceSession"> | number | null
     schedule?: XOR<ScheduleScalarRelationFilter, ScheduleWhereInput>
     attendances?: AttendanceListRelationFilter
   }
@@ -13697,6 +13850,9 @@ export namespace Prisma {
     expiresAt?: SortOrder
     token?: SortOrder
     createdAt?: SortOrder
+    latitude?: SortOrderInput | SortOrder
+    longitude?: SortOrderInput | SortOrder
+    radiusMeters?: SortOrderInput | SortOrder
     schedule?: ScheduleOrderByWithRelationInput
     attendances?: AttendanceOrderByRelationAggregateInput
   }
@@ -13711,6 +13867,9 @@ export namespace Prisma {
     date?: DateTimeFilter<"AttendanceSession"> | Date | string
     expiresAt?: DateTimeFilter<"AttendanceSession"> | Date | string
     createdAt?: DateTimeFilter<"AttendanceSession"> | Date | string
+    latitude?: FloatNullableFilter<"AttendanceSession"> | number | null
+    longitude?: FloatNullableFilter<"AttendanceSession"> | number | null
+    radiusMeters?: IntNullableFilter<"AttendanceSession"> | number | null
     schedule?: XOR<ScheduleScalarRelationFilter, ScheduleWhereInput>
     attendances?: AttendanceListRelationFilter
   }, "id" | "token">
@@ -13722,9 +13881,14 @@ export namespace Prisma {
     expiresAt?: SortOrder
     token?: SortOrder
     createdAt?: SortOrder
+    latitude?: SortOrderInput | SortOrder
+    longitude?: SortOrderInput | SortOrder
+    radiusMeters?: SortOrderInput | SortOrder
     _count?: AttendanceSessionCountOrderByAggregateInput
+    _avg?: AttendanceSessionAvgOrderByAggregateInput
     _max?: AttendanceSessionMaxOrderByAggregateInput
     _min?: AttendanceSessionMinOrderByAggregateInput
+    _sum?: AttendanceSessionSumOrderByAggregateInput
   }
 
   export type AttendanceSessionScalarWhereWithAggregatesInput = {
@@ -13737,6 +13901,9 @@ export namespace Prisma {
     expiresAt?: DateTimeWithAggregatesFilter<"AttendanceSession"> | Date | string
     token?: StringWithAggregatesFilter<"AttendanceSession"> | string
     createdAt?: DateTimeWithAggregatesFilter<"AttendanceSession"> | Date | string
+    latitude?: FloatNullableWithAggregatesFilter<"AttendanceSession"> | number | null
+    longitude?: FloatNullableWithAggregatesFilter<"AttendanceSession"> | number | null
+    radiusMeters?: IntNullableWithAggregatesFilter<"AttendanceSession"> | number | null
   }
 
   export type AttendanceWhereInput = {
@@ -13750,6 +13917,8 @@ export namespace Prisma {
     date?: DateTimeFilter<"Attendance"> | Date | string
     status?: EnumAttendanceStatusFilter<"Attendance"> | $Enums.AttendanceStatus
     scannedAt?: DateTimeNullableFilter<"Attendance"> | Date | string | null
+    scannedLatitude?: FloatNullableFilter<"Attendance"> | number | null
+    scannedLongitude?: FloatNullableFilter<"Attendance"> | number | null
     student?: XOR<StudentScalarRelationFilter, StudentWhereInput>
     schedule?: XOR<ScheduleScalarRelationFilter, ScheduleWhereInput>
     session?: XOR<AttendanceSessionScalarRelationFilter, AttendanceSessionWhereInput>
@@ -13763,6 +13932,8 @@ export namespace Prisma {
     date?: SortOrder
     status?: SortOrder
     scannedAt?: SortOrderInput | SortOrder
+    scannedLatitude?: SortOrderInput | SortOrder
+    scannedLongitude?: SortOrderInput | SortOrder
     student?: StudentOrderByWithRelationInput
     schedule?: ScheduleOrderByWithRelationInput
     session?: AttendanceSessionOrderByWithRelationInput
@@ -13780,6 +13951,8 @@ export namespace Prisma {
     date?: DateTimeFilter<"Attendance"> | Date | string
     status?: EnumAttendanceStatusFilter<"Attendance"> | $Enums.AttendanceStatus
     scannedAt?: DateTimeNullableFilter<"Attendance"> | Date | string | null
+    scannedLatitude?: FloatNullableFilter<"Attendance"> | number | null
+    scannedLongitude?: FloatNullableFilter<"Attendance"> | number | null
     student?: XOR<StudentScalarRelationFilter, StudentWhereInput>
     schedule?: XOR<ScheduleScalarRelationFilter, ScheduleWhereInput>
     session?: XOR<AttendanceSessionScalarRelationFilter, AttendanceSessionWhereInput>
@@ -13793,9 +13966,13 @@ export namespace Prisma {
     date?: SortOrder
     status?: SortOrder
     scannedAt?: SortOrderInput | SortOrder
+    scannedLatitude?: SortOrderInput | SortOrder
+    scannedLongitude?: SortOrderInput | SortOrder
     _count?: AttendanceCountOrderByAggregateInput
+    _avg?: AttendanceAvgOrderByAggregateInput
     _max?: AttendanceMaxOrderByAggregateInput
     _min?: AttendanceMinOrderByAggregateInput
+    _sum?: AttendanceSumOrderByAggregateInput
   }
 
   export type AttendanceScalarWhereWithAggregatesInput = {
@@ -13809,6 +13986,8 @@ export namespace Prisma {
     date?: DateTimeWithAggregatesFilter<"Attendance"> | Date | string
     status?: EnumAttendanceStatusWithAggregatesFilter<"Attendance"> | $Enums.AttendanceStatus
     scannedAt?: DateTimeNullableWithAggregatesFilter<"Attendance"> | Date | string | null
+    scannedLatitude?: FloatNullableWithAggregatesFilter<"Attendance"> | number | null
+    scannedLongitude?: FloatNullableWithAggregatesFilter<"Attendance"> | number | null
   }
 
   export type ScoreWhereInput = {
@@ -14281,6 +14460,9 @@ export namespace Prisma {
     expiresAt: Date | string
     token: string
     createdAt?: Date | string
+    latitude?: number | null
+    longitude?: number | null
+    radiusMeters?: number | null
     schedule: ScheduleCreateNestedOneWithoutSessionsInput
     attendances?: AttendanceCreateNestedManyWithoutSessionInput
   }
@@ -14292,6 +14474,9 @@ export namespace Prisma {
     expiresAt: Date | string
     token: string
     createdAt?: Date | string
+    latitude?: number | null
+    longitude?: number | null
+    radiusMeters?: number | null
     attendances?: AttendanceUncheckedCreateNestedManyWithoutSessionInput
   }
 
@@ -14301,6 +14486,9 @@ export namespace Prisma {
     expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
     token?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    latitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    longitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    radiusMeters?: NullableIntFieldUpdateOperationsInput | number | null
     schedule?: ScheduleUpdateOneRequiredWithoutSessionsNestedInput
     attendances?: AttendanceUpdateManyWithoutSessionNestedInput
   }
@@ -14312,6 +14500,9 @@ export namespace Prisma {
     expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
     token?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    latitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    longitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    radiusMeters?: NullableIntFieldUpdateOperationsInput | number | null
     attendances?: AttendanceUncheckedUpdateManyWithoutSessionNestedInput
   }
 
@@ -14322,6 +14513,9 @@ export namespace Prisma {
     expiresAt: Date | string
     token: string
     createdAt?: Date | string
+    latitude?: number | null
+    longitude?: number | null
+    radiusMeters?: number | null
   }
 
   export type AttendanceSessionUpdateManyMutationInput = {
@@ -14330,6 +14524,9 @@ export namespace Prisma {
     expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
     token?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    latitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    longitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    radiusMeters?: NullableIntFieldUpdateOperationsInput | number | null
   }
 
   export type AttendanceSessionUncheckedUpdateManyInput = {
@@ -14339,6 +14536,9 @@ export namespace Prisma {
     expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
     token?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    latitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    longitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    radiusMeters?: NullableIntFieldUpdateOperationsInput | number | null
   }
 
   export type AttendanceCreateInput = {
@@ -14346,6 +14546,8 @@ export namespace Prisma {
     date: Date | string
     status: $Enums.AttendanceStatus
     scannedAt?: Date | string | null
+    scannedLatitude?: number | null
+    scannedLongitude?: number | null
     student: StudentCreateNestedOneWithoutAttendanceInput
     schedule: ScheduleCreateNestedOneWithoutAttendancesInput
     session: AttendanceSessionCreateNestedOneWithoutAttendancesInput
@@ -14359,6 +14561,8 @@ export namespace Prisma {
     date: Date | string
     status: $Enums.AttendanceStatus
     scannedAt?: Date | string | null
+    scannedLatitude?: number | null
+    scannedLongitude?: number | null
   }
 
   export type AttendanceUpdateInput = {
@@ -14366,6 +14570,8 @@ export namespace Prisma {
     date?: DateTimeFieldUpdateOperationsInput | Date | string
     status?: EnumAttendanceStatusFieldUpdateOperationsInput | $Enums.AttendanceStatus
     scannedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    scannedLatitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    scannedLongitude?: NullableFloatFieldUpdateOperationsInput | number | null
     student?: StudentUpdateOneRequiredWithoutAttendanceNestedInput
     schedule?: ScheduleUpdateOneRequiredWithoutAttendancesNestedInput
     session?: AttendanceSessionUpdateOneRequiredWithoutAttendancesNestedInput
@@ -14379,6 +14585,8 @@ export namespace Prisma {
     date?: DateTimeFieldUpdateOperationsInput | Date | string
     status?: EnumAttendanceStatusFieldUpdateOperationsInput | $Enums.AttendanceStatus
     scannedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    scannedLatitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    scannedLongitude?: NullableFloatFieldUpdateOperationsInput | number | null
   }
 
   export type AttendanceCreateManyInput = {
@@ -14389,6 +14597,8 @@ export namespace Prisma {
     date: Date | string
     status: $Enums.AttendanceStatus
     scannedAt?: Date | string | null
+    scannedLatitude?: number | null
+    scannedLongitude?: number | null
   }
 
   export type AttendanceUpdateManyMutationInput = {
@@ -14396,6 +14606,8 @@ export namespace Prisma {
     date?: DateTimeFieldUpdateOperationsInput | Date | string
     status?: EnumAttendanceStatusFieldUpdateOperationsInput | $Enums.AttendanceStatus
     scannedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    scannedLatitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    scannedLongitude?: NullableFloatFieldUpdateOperationsInput | number | null
   }
 
   export type AttendanceUncheckedUpdateManyInput = {
@@ -14406,6 +14618,8 @@ export namespace Prisma {
     date?: DateTimeFieldUpdateOperationsInput | Date | string
     status?: EnumAttendanceStatusFieldUpdateOperationsInput | $Enums.AttendanceStatus
     scannedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    scannedLatitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    scannedLongitude?: NullableFloatFieldUpdateOperationsInput | number | null
   }
 
   export type ScoreCreateInput = {
@@ -14830,9 +15044,36 @@ export namespace Prisma {
     _max?: NestedEnumWeekdayFilter<$PrismaModel>
   }
 
+  export type FloatNullableFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+    lt?: number | FloatFieldRefInput<$PrismaModel>
+    lte?: number | FloatFieldRefInput<$PrismaModel>
+    gt?: number | FloatFieldRefInput<$PrismaModel>
+    gte?: number | FloatFieldRefInput<$PrismaModel>
+    not?: NestedFloatNullableFilter<$PrismaModel> | number | null
+  }
+
+  export type IntNullableFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntNullableFilter<$PrismaModel> | number | null
+  }
+
   export type ScheduleScalarRelationFilter = {
     is?: ScheduleWhereInput
     isNot?: ScheduleWhereInput
+  }
+
+  export type SortOrderInput = {
+    sort: SortOrder
+    nulls?: NullsOrder
   }
 
   export type AttendanceSessionCountOrderByAggregateInput = {
@@ -14842,6 +15083,15 @@ export namespace Prisma {
     expiresAt?: SortOrder
     token?: SortOrder
     createdAt?: SortOrder
+    latitude?: SortOrder
+    longitude?: SortOrder
+    radiusMeters?: SortOrder
+  }
+
+  export type AttendanceSessionAvgOrderByAggregateInput = {
+    latitude?: SortOrder
+    longitude?: SortOrder
+    radiusMeters?: SortOrder
   }
 
   export type AttendanceSessionMaxOrderByAggregateInput = {
@@ -14851,6 +15101,9 @@ export namespace Prisma {
     expiresAt?: SortOrder
     token?: SortOrder
     createdAt?: SortOrder
+    latitude?: SortOrder
+    longitude?: SortOrder
+    radiusMeters?: SortOrder
   }
 
   export type AttendanceSessionMinOrderByAggregateInput = {
@@ -14860,6 +15113,47 @@ export namespace Prisma {
     expiresAt?: SortOrder
     token?: SortOrder
     createdAt?: SortOrder
+    latitude?: SortOrder
+    longitude?: SortOrder
+    radiusMeters?: SortOrder
+  }
+
+  export type AttendanceSessionSumOrderByAggregateInput = {
+    latitude?: SortOrder
+    longitude?: SortOrder
+    radiusMeters?: SortOrder
+  }
+
+  export type FloatNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+    lt?: number | FloatFieldRefInput<$PrismaModel>
+    lte?: number | FloatFieldRefInput<$PrismaModel>
+    gt?: number | FloatFieldRefInput<$PrismaModel>
+    gte?: number | FloatFieldRefInput<$PrismaModel>
+    not?: NestedFloatNullableWithAggregatesFilter<$PrismaModel> | number | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _avg?: NestedFloatNullableFilter<$PrismaModel>
+    _sum?: NestedFloatNullableFilter<$PrismaModel>
+    _min?: NestedFloatNullableFilter<$PrismaModel>
+    _max?: NestedFloatNullableFilter<$PrismaModel>
+  }
+
+  export type IntNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntNullableWithAggregatesFilter<$PrismaModel> | number | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _avg?: NestedFloatNullableFilter<$PrismaModel>
+    _sum?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedIntNullableFilter<$PrismaModel>
+    _max?: NestedIntNullableFilter<$PrismaModel>
   }
 
   export type EnumAttendanceStatusFilter<$PrismaModel = never> = {
@@ -14890,11 +15184,6 @@ export namespace Prisma {
     isNot?: AttendanceSessionWhereInput
   }
 
-  export type SortOrderInput = {
-    sort: SortOrder
-    nulls?: NullsOrder
-  }
-
   export type AttendanceStudentIdSessionIdCompoundUniqueInput = {
     studentId: string
     sessionId: string
@@ -14908,6 +15197,13 @@ export namespace Prisma {
     date?: SortOrder
     status?: SortOrder
     scannedAt?: SortOrder
+    scannedLatitude?: SortOrder
+    scannedLongitude?: SortOrder
+  }
+
+  export type AttendanceAvgOrderByAggregateInput = {
+    scannedLatitude?: SortOrder
+    scannedLongitude?: SortOrder
   }
 
   export type AttendanceMaxOrderByAggregateInput = {
@@ -14918,6 +15214,8 @@ export namespace Prisma {
     date?: SortOrder
     status?: SortOrder
     scannedAt?: SortOrder
+    scannedLatitude?: SortOrder
+    scannedLongitude?: SortOrder
   }
 
   export type AttendanceMinOrderByAggregateInput = {
@@ -14928,6 +15226,13 @@ export namespace Prisma {
     date?: SortOrder
     status?: SortOrder
     scannedAt?: SortOrder
+    scannedLatitude?: SortOrder
+    scannedLongitude?: SortOrder
+  }
+
+  export type AttendanceSumOrderByAggregateInput = {
+    scannedLatitude?: SortOrder
+    scannedLongitude?: SortOrder
   }
 
   export type EnumAttendanceStatusWithAggregatesFilter<$PrismaModel = never> = {
@@ -15747,6 +16052,22 @@ export namespace Prisma {
     connect?: AttendanceWhereUniqueInput | AttendanceWhereUniqueInput[]
   }
 
+  export type NullableFloatFieldUpdateOperationsInput = {
+    set?: number | null
+    increment?: number
+    decrement?: number
+    multiply?: number
+    divide?: number
+  }
+
+  export type NullableIntFieldUpdateOperationsInput = {
+    set?: number | null
+    increment?: number
+    decrement?: number
+    multiply?: number
+    divide?: number
+  }
+
   export type ScheduleUpdateOneRequiredWithoutSessionsNestedInput = {
     create?: XOR<ScheduleCreateWithoutSessionsInput, ScheduleUncheckedCreateWithoutSessionsInput>
     connectOrCreate?: ScheduleCreateOrConnectWithoutSessionsInput
@@ -15995,6 +16316,60 @@ export namespace Prisma {
     _max?: NestedEnumWeekdayFilter<$PrismaModel>
   }
 
+  export type NestedFloatNullableFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+    lt?: number | FloatFieldRefInput<$PrismaModel>
+    lte?: number | FloatFieldRefInput<$PrismaModel>
+    gt?: number | FloatFieldRefInput<$PrismaModel>
+    gte?: number | FloatFieldRefInput<$PrismaModel>
+    not?: NestedFloatNullableFilter<$PrismaModel> | number | null
+  }
+
+  export type NestedIntNullableFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntNullableFilter<$PrismaModel> | number | null
+  }
+
+  export type NestedFloatNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+    lt?: number | FloatFieldRefInput<$PrismaModel>
+    lte?: number | FloatFieldRefInput<$PrismaModel>
+    gt?: number | FloatFieldRefInput<$PrismaModel>
+    gte?: number | FloatFieldRefInput<$PrismaModel>
+    not?: NestedFloatNullableWithAggregatesFilter<$PrismaModel> | number | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _avg?: NestedFloatNullableFilter<$PrismaModel>
+    _sum?: NestedFloatNullableFilter<$PrismaModel>
+    _min?: NestedFloatNullableFilter<$PrismaModel>
+    _max?: NestedFloatNullableFilter<$PrismaModel>
+  }
+
+  export type NestedIntNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntNullableWithAggregatesFilter<$PrismaModel> | number | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _avg?: NestedFloatNullableFilter<$PrismaModel>
+    _sum?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedIntNullableFilter<$PrismaModel>
+    _max?: NestedIntNullableFilter<$PrismaModel>
+  }
+
   export type NestedEnumAttendanceStatusFilter<$PrismaModel = never> = {
     equals?: $Enums.AttendanceStatus | EnumAttendanceStatusFieldRefInput<$PrismaModel>
     in?: $Enums.AttendanceStatus[] | ListEnumAttendanceStatusFieldRefInput<$PrismaModel>
@@ -16035,17 +16410,6 @@ export namespace Prisma {
     _count?: NestedIntNullableFilter<$PrismaModel>
     _min?: NestedDateTimeNullableFilter<$PrismaModel>
     _max?: NestedDateTimeNullableFilter<$PrismaModel>
-  }
-
-  export type NestedIntNullableFilter<$PrismaModel = never> = {
-    equals?: number | IntFieldRefInput<$PrismaModel> | null
-    in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
-    notIn?: number[] | ListIntFieldRefInput<$PrismaModel> | null
-    lt?: number | IntFieldRefInput<$PrismaModel>
-    lte?: number | IntFieldRefInput<$PrismaModel>
-    gt?: number | IntFieldRefInput<$PrismaModel>
-    gte?: number | IntFieldRefInput<$PrismaModel>
-    not?: NestedIntNullableFilter<$PrismaModel> | number | null
   }
 
   export type NestedEnumScoreTypeFilter<$PrismaModel = never> = {
@@ -16272,6 +16636,8 @@ export namespace Prisma {
     date: Date | string
     status: $Enums.AttendanceStatus
     scannedAt?: Date | string | null
+    scannedLatitude?: number | null
+    scannedLongitude?: number | null
     schedule: ScheduleCreateNestedOneWithoutAttendancesInput
     session: AttendanceSessionCreateNestedOneWithoutAttendancesInput
   }
@@ -16283,6 +16649,8 @@ export namespace Prisma {
     date: Date | string
     status: $Enums.AttendanceStatus
     scannedAt?: Date | string | null
+    scannedLatitude?: number | null
+    scannedLongitude?: number | null
   }
 
   export type AttendanceCreateOrConnectWithoutStudentInput = {
@@ -16402,6 +16770,8 @@ export namespace Prisma {
     date?: DateTimeFilter<"Attendance"> | Date | string
     status?: EnumAttendanceStatusFilter<"Attendance"> | $Enums.AttendanceStatus
     scannedAt?: DateTimeNullableFilter<"Attendance"> | Date | string | null
+    scannedLatitude?: FloatNullableFilter<"Attendance"> | number | null
+    scannedLongitude?: FloatNullableFilter<"Attendance"> | number | null
   }
 
   export type ScoreUpsertWithWhereUniqueWithoutStudentInput = {
@@ -16980,6 +17350,9 @@ export namespace Prisma {
     expiresAt: Date | string
     token: string
     createdAt?: Date | string
+    latitude?: number | null
+    longitude?: number | null
+    radiusMeters?: number | null
     attendances?: AttendanceCreateNestedManyWithoutSessionInput
   }
 
@@ -16989,6 +17362,9 @@ export namespace Prisma {
     expiresAt: Date | string
     token: string
     createdAt?: Date | string
+    latitude?: number | null
+    longitude?: number | null
+    radiusMeters?: number | null
     attendances?: AttendanceUncheckedCreateNestedManyWithoutSessionInput
   }
 
@@ -17007,6 +17383,8 @@ export namespace Prisma {
     date: Date | string
     status: $Enums.AttendanceStatus
     scannedAt?: Date | string | null
+    scannedLatitude?: number | null
+    scannedLongitude?: number | null
     student: StudentCreateNestedOneWithoutAttendanceInput
     session: AttendanceSessionCreateNestedOneWithoutAttendancesInput
   }
@@ -17018,6 +17396,8 @@ export namespace Prisma {
     date: Date | string
     status: $Enums.AttendanceStatus
     scannedAt?: Date | string | null
+    scannedLatitude?: number | null
+    scannedLongitude?: number | null
   }
 
   export type AttendanceCreateOrConnectWithoutScheduleInput = {
@@ -17131,6 +17511,9 @@ export namespace Prisma {
     expiresAt?: DateTimeFilter<"AttendanceSession"> | Date | string
     token?: StringFilter<"AttendanceSession"> | string
     createdAt?: DateTimeFilter<"AttendanceSession"> | Date | string
+    latitude?: FloatNullableFilter<"AttendanceSession"> | number | null
+    longitude?: FloatNullableFilter<"AttendanceSession"> | number | null
+    radiusMeters?: IntNullableFilter<"AttendanceSession"> | number | null
   }
 
   export type AttendanceUpsertWithWhereUniqueWithoutScheduleInput = {
@@ -17181,6 +17564,8 @@ export namespace Prisma {
     date: Date | string
     status: $Enums.AttendanceStatus
     scannedAt?: Date | string | null
+    scannedLatitude?: number | null
+    scannedLongitude?: number | null
     student: StudentCreateNestedOneWithoutAttendanceInput
     schedule: ScheduleCreateNestedOneWithoutAttendancesInput
   }
@@ -17192,6 +17577,8 @@ export namespace Prisma {
     date: Date | string
     status: $Enums.AttendanceStatus
     scannedAt?: Date | string | null
+    scannedLatitude?: number | null
+    scannedLongitude?: number | null
   }
 
   export type AttendanceCreateOrConnectWithoutSessionInput = {
@@ -17311,6 +17698,9 @@ export namespace Prisma {
     expiresAt: Date | string
     token: string
     createdAt?: Date | string
+    latitude?: number | null
+    longitude?: number | null
+    radiusMeters?: number | null
     schedule: ScheduleCreateNestedOneWithoutSessionsInput
   }
 
@@ -17321,6 +17711,9 @@ export namespace Prisma {
     expiresAt: Date | string
     token: string
     createdAt?: Date | string
+    latitude?: number | null
+    longitude?: number | null
+    radiusMeters?: number | null
   }
 
   export type AttendanceSessionCreateOrConnectWithoutAttendancesInput = {
@@ -17409,6 +17802,9 @@ export namespace Prisma {
     expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
     token?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    latitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    longitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    radiusMeters?: NullableIntFieldUpdateOperationsInput | number | null
     schedule?: ScheduleUpdateOneRequiredWithoutSessionsNestedInput
   }
 
@@ -17419,6 +17815,9 @@ export namespace Prisma {
     expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
     token?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    latitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    longitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    radiusMeters?: NullableIntFieldUpdateOperationsInput | number | null
   }
 
   export type StudentCreateWithoutScoresInput = {
@@ -17528,6 +17927,8 @@ export namespace Prisma {
     date: Date | string
     status: $Enums.AttendanceStatus
     scannedAt?: Date | string | null
+    scannedLatitude?: number | null
+    scannedLongitude?: number | null
   }
 
   export type ScoreCreateManyStudentInput = {
@@ -17544,6 +17945,8 @@ export namespace Prisma {
     date?: DateTimeFieldUpdateOperationsInput | Date | string
     status?: EnumAttendanceStatusFieldUpdateOperationsInput | $Enums.AttendanceStatus
     scannedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    scannedLatitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    scannedLongitude?: NullableFloatFieldUpdateOperationsInput | number | null
     schedule?: ScheduleUpdateOneRequiredWithoutAttendancesNestedInput
     session?: AttendanceSessionUpdateOneRequiredWithoutAttendancesNestedInput
   }
@@ -17555,6 +17958,8 @@ export namespace Prisma {
     date?: DateTimeFieldUpdateOperationsInput | Date | string
     status?: EnumAttendanceStatusFieldUpdateOperationsInput | $Enums.AttendanceStatus
     scannedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    scannedLatitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    scannedLongitude?: NullableFloatFieldUpdateOperationsInput | number | null
   }
 
   export type AttendanceUncheckedUpdateManyWithoutStudentInput = {
@@ -17564,6 +17969,8 @@ export namespace Prisma {
     date?: DateTimeFieldUpdateOperationsInput | Date | string
     status?: EnumAttendanceStatusFieldUpdateOperationsInput | $Enums.AttendanceStatus
     scannedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    scannedLatitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    scannedLongitude?: NullableFloatFieldUpdateOperationsInput | number | null
   }
 
   export type ScoreUpdateWithoutStudentInput = {
@@ -17831,6 +18238,9 @@ export namespace Prisma {
     expiresAt: Date | string
     token: string
     createdAt?: Date | string
+    latitude?: number | null
+    longitude?: number | null
+    radiusMeters?: number | null
   }
 
   export type AttendanceCreateManyScheduleInput = {
@@ -17840,6 +18250,8 @@ export namespace Prisma {
     date: Date | string
     status: $Enums.AttendanceStatus
     scannedAt?: Date | string | null
+    scannedLatitude?: number | null
+    scannedLongitude?: number | null
   }
 
   export type AttendanceSessionUpdateWithoutScheduleInput = {
@@ -17848,6 +18260,9 @@ export namespace Prisma {
     expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
     token?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    latitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    longitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    radiusMeters?: NullableIntFieldUpdateOperationsInput | number | null
     attendances?: AttendanceUpdateManyWithoutSessionNestedInput
   }
 
@@ -17857,6 +18272,9 @@ export namespace Prisma {
     expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
     token?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    latitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    longitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    radiusMeters?: NullableIntFieldUpdateOperationsInput | number | null
     attendances?: AttendanceUncheckedUpdateManyWithoutSessionNestedInput
   }
 
@@ -17866,6 +18284,9 @@ export namespace Prisma {
     expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
     token?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    latitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    longitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    radiusMeters?: NullableIntFieldUpdateOperationsInput | number | null
   }
 
   export type AttendanceUpdateWithoutScheduleInput = {
@@ -17873,6 +18294,8 @@ export namespace Prisma {
     date?: DateTimeFieldUpdateOperationsInput | Date | string
     status?: EnumAttendanceStatusFieldUpdateOperationsInput | $Enums.AttendanceStatus
     scannedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    scannedLatitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    scannedLongitude?: NullableFloatFieldUpdateOperationsInput | number | null
     student?: StudentUpdateOneRequiredWithoutAttendanceNestedInput
     session?: AttendanceSessionUpdateOneRequiredWithoutAttendancesNestedInput
   }
@@ -17884,6 +18307,8 @@ export namespace Prisma {
     date?: DateTimeFieldUpdateOperationsInput | Date | string
     status?: EnumAttendanceStatusFieldUpdateOperationsInput | $Enums.AttendanceStatus
     scannedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    scannedLatitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    scannedLongitude?: NullableFloatFieldUpdateOperationsInput | number | null
   }
 
   export type AttendanceUncheckedUpdateManyWithoutScheduleInput = {
@@ -17893,6 +18318,8 @@ export namespace Prisma {
     date?: DateTimeFieldUpdateOperationsInput | Date | string
     status?: EnumAttendanceStatusFieldUpdateOperationsInput | $Enums.AttendanceStatus
     scannedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    scannedLatitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    scannedLongitude?: NullableFloatFieldUpdateOperationsInput | number | null
   }
 
   export type AttendanceCreateManySessionInput = {
@@ -17902,6 +18329,8 @@ export namespace Prisma {
     date: Date | string
     status: $Enums.AttendanceStatus
     scannedAt?: Date | string | null
+    scannedLatitude?: number | null
+    scannedLongitude?: number | null
   }
 
   export type AttendanceUpdateWithoutSessionInput = {
@@ -17909,6 +18338,8 @@ export namespace Prisma {
     date?: DateTimeFieldUpdateOperationsInput | Date | string
     status?: EnumAttendanceStatusFieldUpdateOperationsInput | $Enums.AttendanceStatus
     scannedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    scannedLatitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    scannedLongitude?: NullableFloatFieldUpdateOperationsInput | number | null
     student?: StudentUpdateOneRequiredWithoutAttendanceNestedInput
     schedule?: ScheduleUpdateOneRequiredWithoutAttendancesNestedInput
   }
@@ -17920,6 +18351,8 @@ export namespace Prisma {
     date?: DateTimeFieldUpdateOperationsInput | Date | string
     status?: EnumAttendanceStatusFieldUpdateOperationsInput | $Enums.AttendanceStatus
     scannedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    scannedLatitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    scannedLongitude?: NullableFloatFieldUpdateOperationsInput | number | null
   }
 
   export type AttendanceUncheckedUpdateManyWithoutSessionInput = {
@@ -17929,6 +18362,8 @@ export namespace Prisma {
     date?: DateTimeFieldUpdateOperationsInput | Date | string
     status?: EnumAttendanceStatusFieldUpdateOperationsInput | $Enums.AttendanceStatus
     scannedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    scannedLatitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    scannedLongitude?: NullableFloatFieldUpdateOperationsInput | number | null
   }
 
 

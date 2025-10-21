@@ -201,7 +201,14 @@ exports.createAttendanceSession = async (req, res) => {
     }
 
     const { id } = req.params;
-    const { scheduleId, durationMinutes = 30 } = req.body;
+    // Extract new geolocation fields from body
+    const {
+      scheduleId,
+      durationMinutes = 30,
+      latitude,
+      longitude,
+      radiusMeters,
+    } = req.body;
 
     // Check if teacher exists
     const teacher = await prisma.teacher.findUnique({
@@ -230,6 +237,41 @@ exports.createAttendanceSession = async (req, res) => {
       });
     }
 
+    // Prepare optional geolocation data
+    const geoData = {};
+    const latProvided =
+      latitude !== undefined && latitude !== null && latitude !== "";
+    const lonProvided =
+      longitude !== undefined && longitude !== null && longitude !== "";
+    const radiusProvided =
+      radiusMeters !== undefined &&
+      radiusMeters !== null &&
+      radiusMeters !== "";
+
+    // Convert to float/int and add to geoData if provided
+    if (latProvided) geoData.latitude = parseFloat(latitude);
+    if (lonProvided) geoData.longitude = parseFloat(longitude);
+    if (radiusProvided) geoData.radiusMeters = parseInt(radiusMeters);
+
+    // Validate geo data consistency (if any one is provided, all three must be valid)
+    const requiredGeoFields = [latProvided, lonProvided, radiusProvided].filter(
+      Boolean
+    ).length;
+
+    if (requiredGeoFields > 0 && requiredGeoFields !== 3) {
+      return res.status(400).json({
+        message:
+          "If using geolocation, latitude, longitude, and radiusMeters must all be provided and valid.",
+      });
+    }
+
+    // Validate radius value
+    if (geoData.radiusMeters !== undefined && geoData.radiusMeters <= 0) {
+      return res.status(400).json({
+        message: "Radius must be a positive integer in meters.",
+      });
+    }
+
     // Generate random token (6 characters)
     const token = Math.random().toString(36).substring(2, 8).toUpperCase();
 
@@ -244,6 +286,7 @@ exports.createAttendanceSession = async (req, res) => {
         date: now,
         token,
         expiresAt,
+        ...geoData, // Add geolocation data
       },
       include: {
         schedule: {

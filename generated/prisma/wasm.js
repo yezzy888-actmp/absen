@@ -176,7 +176,10 @@ exports.Prisma.AttendanceSessionScalarFieldEnum = {
   date: 'date',
   expiresAt: 'expiresAt',
   token: 'token',
-  createdAt: 'createdAt'
+  createdAt: 'createdAt',
+  latitude: 'latitude',
+  longitude: 'longitude',
+  radiusMeters: 'radiusMeters'
 };
 
 exports.Prisma.AttendanceScalarFieldEnum = {
@@ -186,7 +189,9 @@ exports.Prisma.AttendanceScalarFieldEnum = {
   sessionId: 'sessionId',
   date: 'date',
   status: 'status',
-  scannedAt: 'scannedAt'
+  scannedAt: 'scannedAt',
+  scannedLatitude: 'scannedLatitude',
+  scannedLongitude: 'scannedLongitude'
 };
 
 exports.Prisma.ScoreScalarFieldEnum = {

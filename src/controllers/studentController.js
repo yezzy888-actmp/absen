@@ -372,7 +372,8 @@ exports.submitAttendance = async (req, res) => {
     }
 
     const { id } = req.params;
-    const { token } = req.body;
+    // Get token and student's current location from request body
+    const { token, studentLatitude, studentLongitude } = req.body;
     const { user } = req;
 
     // Verify that the student ID matches the authenticated user
@@ -423,6 +424,53 @@ exports.submitAttendance = async (req, res) => {
         .json({ message: "This attendance session is not for your class" });
     }
 
+    // --- Geolocation Check Implementation ---
+    const isGeolocationRequired =
+      session.latitude && session.longitude && session.radiusMeters !== null;
+
+    if (isGeolocationRequired) {
+      // 1. Validate student location input
+      if (studentLatitude === undefined || studentLongitude === undefined) {
+        return res.status(400).json({
+          message:
+            "Geolocation is required for this session. Please provide studentLatitude and studentLongitude.",
+        });
+      }
+
+      const requiredLat = session.latitude;
+      const requiredLon = session.longitude;
+      const allowedRadius = session.radiusMeters;
+
+      const studentLatFloat = parseFloat(studentLatitude);
+      const studentLonFloat = parseFloat(studentLongitude);
+
+      // Validate parsed location values
+      if (isNaN(studentLatFloat) || isNaN(studentLonFloat)) {
+        return res.status(400).json({
+          message: "Invalid format for studentLatitude or studentLongitude.",
+        });
+      }
+
+      const distance = haversineDistance(
+        studentLatFloat,
+        studentLonFloat,
+        requiredLat,
+        requiredLon
+      );
+
+      // 2. Check if student is within the allowed radius
+      if (distance > allowedRadius) {
+        return res.status(403).json({
+          message: `Akses ditolak. Lokasi Anda terlalu jauh. Jarak: ${Math.round(
+            distance
+          )}m, Diizinkan: ${allowedRadius}m.`,
+          distance: Math.round(distance),
+          allowedRadius: allowedRadius,
+        });
+      }
+    }
+    // --- End Geolocation Check ---
+
     // Check if student has already submitted attendance for this session
     const existingAttendance = await prisma.attendance.findFirst({
       where: {
@@ -441,6 +489,14 @@ exports.submitAttendance = async (req, res) => {
       });
     }
 
+    // Prepare location data to be stored in the Attendance record
+    const locationData = isGeolocationRequired
+      ? {
+          scannedLatitude: parseFloat(studentLatitude),
+          scannedLongitude: parseFloat(studentLongitude),
+        }
+      : {};
+
     // Create attendance record
     const attendance = await prisma.attendance.create({
       data: {
@@ -450,6 +506,7 @@ exports.submitAttendance = async (req, res) => {
         status: "HADIR",
         date: new Date(),
         scannedAt: new Date(),
+        ...locationData, // Add scanned location data
       },
       include: {
         schedule: {
@@ -475,6 +532,8 @@ exports.submitAttendance = async (req, res) => {
         scannedAt: attendance.scannedAt,
         subject: attendance.schedule.subject.name,
         sessionDate: attendance.session.date,
+        scannedLatitude: attendance.scannedLatitude,
+        scannedLongitude: attendance.scannedLongitude,
       },
     });
   } catch (error) {

@@ -160,6 +160,11 @@ model AttendanceSession {
   token      String   @unique // Token QR Code untuk scan siswa
   createdAt  DateTime @default(now())
 
+  // NEW: Geolocation fields
+  latitude     Float? // Latitude lokasi presensi yang diizinkan
+  longitude    Float? // Longitude lokasi presensi yang diizinkan
+  radiusMeters Int? // Radius toleransi dalam meter (dalam meter)
+
   // Absensi yang tercatat di sesi ini
   attendances Attendance[]
 
@@ -182,6 +187,10 @@ model Attendance {
   date       DateTime // Tanggal absensi
   status     AttendanceStatus // Status kehadiran (HADIR, IZIN, dll)
   scannedAt  DateTime? // Waktu scan token (bisa null jika diinput manual)
+
+  // NEW: Student's reported location
+  scannedLatitude  Float?
+  scannedLongitude Float?
   /// Use case:
   /// - Mencatat kehadiran siswa pada sesi absensi tertentu
   /// - Status absensi dapat berupa HADIR, IZIN, SAKIT, ALPHA
@@ -205,7 +214,7 @@ model Score {
   createdAt   DateTime  @default(now())
 
   /// Use case:
-  /// - Guru memberikan nilai (UTS, UAS, TUGAS) ke siswa
+  /// - Guru memberikan nilai (UTS, UAS, UAS, TUGAS) ke siswa
   /// - Siswa dapat melihat nilai per mata pelajaran
   /// - Admin bisa mengelola atau review nilai
 }

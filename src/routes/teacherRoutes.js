@@ -41,6 +41,19 @@ router.post(
       .optional()
       .isInt({ min: 5, max: 180 })
       .withMessage("Duration must be between 5 and 180 minutes"),
+    // New fields for geolocation
+    body("latitude")
+      .optional()
+      .isFloat({ min: -90, max: 90 })
+      .withMessage("Latitude must be a valid number between -90 and 90"),
+    body("longitude")
+      .optional()
+      .isFloat({ min: -180, max: 180 })
+      .withMessage("Longitude must be a valid number between -180 and 180"),
+    body("radiusMeters")
+      .optional()
+      .isInt({ min: 1, max: 1000 }) // Maximum radius set to 1km (1000m)
+      .withMessage("Radius must be a positive integer (max 1000m)"),
   ],
   teacherController.createAttendanceSession
 );

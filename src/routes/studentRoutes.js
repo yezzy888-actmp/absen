@@ -88,6 +88,17 @@ const validateAttendanceSubmission = [
     .withMessage("Token is required")
     .isLength({ min: 1 })
     .withMessage("Token cannot be empty"),
+  // NEW: Validations for geolocation submission
+  body("studentLatitude")
+    .optional()
+    .isFloat({ min: -90, max: 90 })
+    .withMessage("Student Latitude must be a valid number between -90 and 90"),
+  body("studentLongitude")
+    .optional()
+    .isFloat({ min: -180, max: 180 })
+    .withMessage(
+      "Student Longitude must be a valid number between -180 and 180"
+    ),
 ];
 
 const validatePagination = [
