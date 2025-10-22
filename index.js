@@ -1,4 +1,4 @@
-// api/index.js
+// absen/index.js
 
 const app = require("../src/server");
 

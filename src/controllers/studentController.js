@@ -451,6 +451,7 @@ exports.submitAttendance = async (req, res) => {
         });
       }
 
+      // Pastikan fungsi haversineDistance diimport dari geoUtils.js
       const distance = haversineDistance(
         studentLatFloat,
         studentLonFloat,
@@ -492,9 +493,9 @@ exports.submitAttendance = async (req, res) => {
     // Prepare location data to be stored in the Attendance record
     const locationData = isGeolocationRequired
       ? {
-          scannedLatitude: parseFloat(studentLatitude),
-          scannedLongitude: parseFloat(studentLongitude),
-        }
+        scannedLatitude: parseFloat(studentLatitude),
+        scannedLongitude: parseFloat(studentLongitude),
+      }
       : {};
 
     // Create attendance record
@@ -537,13 +538,18 @@ exports.submitAttendance = async (req, res) => {
       },
     });
   } catch (error) {
+    // --- MODIFIKASI DEBUGGING ---
     console.error("Submit attendance error:", error);
+
+    // Mengembalikan status 500 dengan pesan error yang lebih eksplisit
     return res.status(500).json({
-      message: "Error submitting attendance",
-      error: error.message,
+      message: "Error submitting attendance - Internal Server Issue",
+      // Menambahkan pesan error spesifik dari server ke client untuk debugging
+      debugError: error.message,
     });
   }
 };
+
 
 /**
  * Get student dashboard summary
@@ -652,9 +658,9 @@ exports.getStudentDashboard = async (req, res) => {
     const averageScore =
       recentScores.length > 0
         ? Math.round(
-            recentScores.reduce((sum, score) => sum + score.value, 0) /
-              recentScores.length
-          )
+          recentScores.reduce((sum, score) => sum + score.value, 0) /
+          recentScores.length
+        )
         : 0;
 
     // Get today's schedule
