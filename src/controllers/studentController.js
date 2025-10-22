@@ -1,6 +1,7 @@
 // src/controllers/studentController.js
 const prisma = require("../utils/prisma");
 const { validationResult } = require("express-validator");
+const { haversineDistance } = require("../utils/geoUtils"); // ← TAMBAHKAN IMPORT INI
 
 /**
  * Get all students with pagination and filtering
@@ -372,9 +373,14 @@ exports.submitAttendance = async (req, res) => {
     }
 
     const { id } = req.params;
-    // Get token and student's current location from request body
     const { token, studentLatitude, studentLongitude } = req.body;
     const { user } = req;
+
+    console.log("=== START SUBMIT ATTENDANCE ===");
+    console.log("Student ID:", id);
+    console.log("Token:", token);
+    console.log("Student Lat:", studentLatitude);
+    console.log("Student Lon:", studentLongitude);
 
     // Verify that the student ID matches the authenticated user
     const student = await prisma.student.findUnique({
@@ -386,7 +392,7 @@ exports.submitAttendance = async (req, res) => {
       return res.status(404).json({ message: "Student not found" });
     }
 
-    // Double-check authorization (student can only submit for themselves)
+    // Double-check authorization
     if (student.userId !== user.id) {
       return res.status(403).json({
         message: "You can only submit attendance for yourself",
@@ -410,6 +416,16 @@ exports.submitAttendance = async (req, res) => {
       return res.status(404).json({ message: "Invalid attendance token" });
     }
 
+    console.log("Session found:", session.id);
+    console.log(
+      "Session geo data - Lat:",
+      session.latitude,
+      "Lon:",
+      session.longitude,
+      "Radius:",
+      session.radiusMeters
+    );
+
     // Check if token is expired
     if (new Date() > session.expiresAt) {
       return res
@@ -426,11 +442,16 @@ exports.submitAttendance = async (req, res) => {
 
     // --- Geolocation Check Implementation ---
     const isGeolocationRequired =
-      session.latitude && session.longitude && session.radiusMeters !== null;
+      session.latitude !== null &&
+      session.longitude !== null &&
+      session.radiusMeters !== null;
+
+    console.log("Geolocation required:", isGeolocationRequired);
 
     if (isGeolocationRequired) {
-      // 1. Validate student location input
+      // Validate student location input
       if (studentLatitude === undefined || studentLongitude === undefined) {
+        console.log("ERROR: Student location not provided");
         return res.status(400).json({
           message:
             "Geolocation is required for this session. Please provide studentLatitude and studentLongitude.",
@@ -446,12 +467,17 @@ exports.submitAttendance = async (req, res) => {
 
       // Validate parsed location values
       if (isNaN(studentLatFloat) || isNaN(studentLonFloat)) {
+        console.log("ERROR: Invalid lat/lon format");
         return res.status(400).json({
           message: "Invalid format for studentLatitude or studentLongitude.",
         });
       }
 
-      // Pastikan fungsi haversineDistance diimport dari geoUtils.js
+      console.log("Calculating distance between:");
+      console.log("  Student:", studentLatFloat, studentLonFloat);
+      console.log("  Session:", requiredLat, requiredLon);
+
+      // Calculate distance using haversineDistance function
       const distance = haversineDistance(
         studentLatFloat,
         studentLonFloat,
@@ -459,8 +485,12 @@ exports.submitAttendance = async (req, res) => {
         requiredLon
       );
 
-      // 2. Check if student is within the allowed radius
+      console.log("Distance calculated:", distance, "meters");
+      console.log("Allowed radius:", allowedRadius, "meters");
+
+      // Check if student is within the allowed radius
       if (distance > allowedRadius) {
+        console.log("ERROR: Distance exceeded");
         return res.status(403).json({
           message: `Akses ditolak. Lokasi Anda terlalu jauh. Jarak: ${Math.round(
             distance
@@ -469,6 +499,8 @@ exports.submitAttendance = async (req, res) => {
           allowedRadius: allowedRadius,
         });
       }
+
+      console.log("SUCCESS: Location check passed");
     }
     // --- End Geolocation Check ---
 
@@ -490,13 +522,15 @@ exports.submitAttendance = async (req, res) => {
       });
     }
 
-    // Prepare location data to be stored in the Attendance record
+    // Prepare location data to be stored
     const locationData = isGeolocationRequired
       ? {
-        scannedLatitude: parseFloat(studentLatitude),
-        scannedLongitude: parseFloat(studentLongitude),
-      }
+          scannedLatitude: parseFloat(studentLatitude),
+          scannedLongitude: parseFloat(studentLongitude),
+        }
       : {};
+
+    console.log("Creating attendance record with data:", locationData);
 
     // Create attendance record
     const attendance = await prisma.attendance.create({
@@ -507,7 +541,7 @@ exports.submitAttendance = async (req, res) => {
         status: "HADIR",
         date: new Date(),
         scannedAt: new Date(),
-        ...locationData, // Add scanned location data
+        ...locationData,
       },
       include: {
         schedule: {
@@ -524,6 +558,9 @@ exports.submitAttendance = async (req, res) => {
       },
     });
 
+    console.log("Attendance created successfully:", attendance.id);
+    console.log("=== END SUBMIT ATTENDANCE ===");
+
     return res.status(201).json({
       message: "Attendance submitted successfully",
       attendance: {
@@ -538,18 +575,20 @@ exports.submitAttendance = async (req, res) => {
       },
     });
   } catch (error) {
-    // --- MODIFIKASI DEBUGGING ---
-    console.error("Submit attendance error:", error);
+    console.error("=== SUBMIT ATTENDANCE ERROR ===");
+    console.error("Error name:", error.name);
+    console.error("Error message:", error.message);
+    console.error("Error stack:", error.stack);
+    console.error("================================");
 
-    // Mengembalikan status 500 dengan pesan error yang lebih eksplisit
     return res.status(500).json({
       message: "Error submitting attendance - Internal Server Issue",
-      // Menambahkan pesan error spesifik dari server ke client untuk debugging
       debugError: error.message,
+      errorStack:
+        process.env.NODE_ENV === "development" ? error.stack : undefined,
     });
   }
 };
-
 
 /**
  * Get student dashboard summary
@@ -617,7 +656,7 @@ exports.getStudentDashboard = async (req, res) => {
       attendanceSummary[stat.status] = stat._count.status;
     });
 
-    // Get total scheduled sessions this month (not just schedule count)
+    // Get total scheduled sessions this month
     const totalScheduledSessions = await prisma.attendanceSession.count({
       where: {
         schedule: {
@@ -658,9 +697,9 @@ exports.getStudentDashboard = async (req, res) => {
     const averageScore =
       recentScores.length > 0
         ? Math.round(
-          recentScores.reduce((sum, score) => sum + score.value, 0) /
-          recentScores.length
-        )
+            recentScores.reduce((sum, score) => sum + score.value, 0) /
+              recentScores.length
+          )
         : 0;
 
     // Get today's schedule
@@ -741,10 +780,10 @@ exports.getStudentAttendanceSummary = async (req, res) => {
       return res.status(404).json({ message: "Student not found" });
     }
 
-    // Set default date range if not provided (current semester)
+    // Set default date range if not provided
     const defaultStartDate = startDate
       ? new Date(startDate)
-      : new Date(new Date().getFullYear(), 0, 1); // Start of year
+      : new Date(new Date().getFullYear(), 0, 1);
     const defaultEndDate = endDate ? new Date(endDate) : new Date();
 
     // Get attendance summary by status
@@ -762,7 +801,7 @@ exports.getStudentAttendanceSummary = async (req, res) => {
       },
     });
 
-    // Get all attendance records with subject details for processing
+    // Get all attendance records with subject details
     const subjectAttendance = await prisma.attendance.findMany({
       where: {
         studentId: id,
@@ -780,7 +819,7 @@ exports.getStudentAttendanceSummary = async (req, res) => {
       },
     });
 
-    // Process subject attendance statistics manually
+    // Process subject attendance statistics
     const subjectStats = {};
     subjectAttendance.forEach((attendance) => {
       const subjectId = attendance.schedule.subject.id;
@@ -809,7 +848,7 @@ exports.getStudentAttendanceSummary = async (req, res) => {
         stats.total > 0 ? Math.round((stats.HADIR / stats.total) * 100) : 0;
     });
 
-    // Transform status summary to object
+    // Transform status summary
     const statusSummary = {
       HADIR: 0,
       IZIN: 0,
@@ -852,10 +891,10 @@ exports.getStudentAttendanceSummary = async (req, res) => {
       },
     });
 
-    // Group attendance trend by date for easier consumption
+    // Group attendance trend by date
     const trendByDate = {};
     attendanceTrend.forEach((attendance) => {
-      const dateKey = attendance.date.toISOString().split("T")[0]; // YYYY-MM-DD format
+      const dateKey = attendance.date.toISOString().split("T")[0];
       if (!trendByDate[dateKey]) {
         trendByDate[dateKey] = {
           date: dateKey,
@@ -896,7 +935,6 @@ exports.getCurrentStudent = async (req, res) => {
   try {
     const { user } = req;
 
-    // Get student data by user ID
     const student = await prisma.student.findUnique({
       where: { userId: user.id },
       include: {
@@ -940,7 +978,6 @@ exports.getCurrentStudentProfile = async (req, res) => {
   try {
     const { user } = req;
 
-    // Get detailed student profile
     const student = await prisma.student.findUnique({
       where: { userId: user.id },
       include: {
@@ -966,13 +1003,11 @@ exports.getCurrentStudentProfile = async (req, res) => {
       });
     }
 
-    // Get additional statistics
     const currentMonth = new Date();
     currentMonth.setDate(1);
     currentMonth.setHours(0, 0, 0, 0);
 
     const [attendanceCount, totalScores, totalSchedules] = await Promise.all([
-      // Count attendance this month
       prisma.attendance.count({
         where: {
           studentId: student.id,
@@ -981,13 +1016,11 @@ exports.getCurrentStudentProfile = async (req, res) => {
           },
         },
       }),
-      // Count total scores
       prisma.score.count({
         where: {
           studentId: student.id,
         },
       }),
-      // Count total scheduled classes
       prisma.schedule.count({
         where: {
           classId: student.classId,
@@ -1020,7 +1053,6 @@ exports.getCurrentStudentProfile = async (req, res) => {
  */
 exports.updateCurrentStudentProfile = async (req, res) => {
   try {
-    // Validate request
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() });
@@ -1029,7 +1061,6 @@ exports.updateCurrentStudentProfile = async (req, res) => {
     const { user } = req;
     const { name, gender } = req.body;
 
-    // Check if student exists
     const existingStudent = await prisma.student.findUnique({
       where: { userId: user.id },
     });
@@ -1040,12 +1071,10 @@ exports.updateCurrentStudentProfile = async (req, res) => {
       });
     }
 
-    // Prepare update data (only allow certain fields)
     const updateData = {};
     if (name) updateData.name = name;
     if (gender) updateData.gender = gender;
 
-    // Update student profile
     const updatedStudent = await prisma.student.update({
       where: { userId: user.id },
       data: updateData,
